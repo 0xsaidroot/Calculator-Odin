@@ -30,6 +30,7 @@ function input(target) {
         if (isDone) {
             secondNumber += entry;
             screen.textContent += entry;
+            operatorClicked = false;
         } else {
             firstNumber += entry;
             screen.textContent = firstNumber;
@@ -43,8 +44,8 @@ function input(target) {
         console.log({ secondNumber });
 
         if (result !== '') {
-            firstNumber = screen.textContent;
-            operated=false;
+            firstNumber = parseInt(screen.textContent);
+            console.log({firstNumber});
         }
         if (firstNumber !== '' && secondNumber !== '') {
             firstNumber = operate(Operator, parseInt(firstNumber), parseInt(secondNumber));
@@ -52,14 +53,26 @@ function input(target) {
             screen.textContent = firstNumber;
         }
 
+        if(operatorClicked === true){
+            Operator = target;
+            screen.textContent = screen.textContent.split('').slice(0,-2).join('') + ` ${Operator} `;
+            console.log(`Operator clicked: ${Operator}`);
+        }else{
+        Operator = target;
+        screen.textContent += ` ${Operator} `;
+        isDone = true;
+        operatorClicked = true;
+        console.log({Operator});
+        }
+
 
 
     } else if (special.includes(target)) {
 
         if (target === 'AC') {
-            firstNumber = '';
+            firstNumber = '0';
             secondNumber = '';
-            screen.textContent = '0';
+            screen.textContent ='0';
             isDone = false;
         } else if (target === 'remove') {
             if (isDone) {
@@ -106,7 +119,8 @@ let Operator = '';
 let operated = false;
 let result = 0;
 let isDone = false;
-let counter = 0;
+let operatorClicked =  false;
+let CEClicked = false;
 let previousFirstNumber = '';
 let previousSecondNumber = '';
 let previousOperator = '';
@@ -115,6 +129,7 @@ const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 const operators = ['+', '-', '*', '/', 'pow'];
 const special = ['AC', 'root', 'PI', 'remove']
 
+const CE = document.querySelector('#AC');
 const screen = document.querySelector('#screen');
 screen.textContent = '0';
 const buttons = document.querySelector('#buttons');
