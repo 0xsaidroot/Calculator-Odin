@@ -12,13 +12,12 @@ function divide(a, b) {
     return 0;
 }
 function operate(Operator, firstNumber, secondNumber) {
-    let result = 0;
     switch (Operator) {
-        case '+': return add(firstNumber, secondNumber);
-        case '-': return subtract(firstNumber, secondNumber);
-        case '*': return multiply(firstNumber, secondNumber);
-        case '/': return divide(firstNumber, secondNumber);
-        case 'pow': return Math.pow(firstNumber, secondNumber);
+        case '+': return add(firstNumber, secondNumber).toFixed(2);
+        case '-': return subtract(firstNumber, secondNumber).toFixed(2);
+        case '*': return multiply(firstNumber, secondNumber).toFixed(2);
+        case '/': return divide(firstNumber, secondNumber).toFixed(2);
+        case 'pow': return Math.pow(firstNumber, secondNumber).toFixed(2);
         default: return 'Invalid Syntax...'
     }
 }
@@ -33,6 +32,7 @@ function input(target) {
             operatorClicked = false;
         } else {
             firstNumber += entry;
+            console.log(`Screen : ${screen.textContent}`);
             screen.textContent = firstNumber;
         }
 
@@ -45,7 +45,7 @@ function input(target) {
 
         if (result !== '') {
             firstNumber = parseInt(screen.textContent);
-            console.log({firstNumber});
+            console.log({ firstNumber });
         }
         if (firstNumber !== '' && secondNumber !== '') {
             firstNumber = operate(Operator, parseInt(firstNumber), parseInt(secondNumber));
@@ -53,16 +53,16 @@ function input(target) {
             screen.textContent = firstNumber;
         }
 
-        if(operatorClicked === true){
+        if (operatorClicked === true) {
             Operator = target;
-            screen.textContent = screen.textContent.split('').slice(0,-2).join('') + ` ${Operator} `;
+            screen.textContent = screen.textContent.split('').slice(0, -2).join('') + ` ${Operator} `;
             console.log(`Operator clicked: ${Operator}`);
-        }else{
-        Operator = target;
-        screen.textContent += ` ${Operator} `;
-        isDone = true;
-        operatorClicked = true;
-        console.log({Operator});
+        } else {
+            Operator = target;
+            screen.textContent += ` ${Operator} `;
+            isDone = true;
+            operatorClicked = true;
+            console.log({ Operator });
         }
 
 
@@ -70,22 +70,25 @@ function input(target) {
     } else if (special.includes(target)) {
 
         if (target === 'AC') {
-            firstNumber = '0';
+            firstNumber = '';
             secondNumber = '';
-            screen.textContent ='0';
+            screen.textContent = '0';
+            CE.textContent = 'C';
             isDone = false;
+
+
         } else if (target === 'remove') {
             if (isDone) {
                 secondNumber = secondNumber.split('').slice(0, -1).join('');
-                screen.textContent = screen.textContent.split('').slice(0,-1).join('');
+                screen.textContent = screen.textContent.split('').slice(0, -1).join('');
             } else {
                 firstNumber = firstNumber.split('').slice(0, -1).join('');
                 screen.textContent = firstNumber;
             }
 
             console.log({ target });
-            console.log({firstNumber});
-            console.log({secondNumber});
+            console.log({ firstNumber });
+            console.log({ secondNumber });
         }
 
     } else if (target === 'equality') {
@@ -108,7 +111,8 @@ function input(target) {
             secondNumber = '';
             Operator = '';
         }
-    } else return;
+    }else return;
+    
 
 }
 
@@ -119,7 +123,7 @@ let Operator = '';
 let operated = false;
 let result = 0;
 let isDone = false;
-let operatorClicked =  false;
+let operatorClicked = false;
 let CEClicked = false;
 let previousFirstNumber = '';
 let previousSecondNumber = '';
@@ -136,6 +140,12 @@ const buttons = document.querySelector('#buttons');
 
 buttons.addEventListener('click', function (event) {
     let target = event.target.id;
+
+    if (screen.textContent !== '') {
+        CE.textContent = 'CE';
+    } else {
+        CE.textContent = 'C';
+    }
     input(target);
 
 })
