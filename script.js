@@ -12,14 +12,20 @@ function divide(a, b) {
     return 0;
 }
 function operate(Operator, firstNumber, secondNumber) {
+    let result;
     switch (Operator) {
-        case '+': return add(firstNumber, secondNumber).toFixed(2);
-        case '-': return subtract(firstNumber, secondNumber).toFixed(2);
-        case '*': return multiply(firstNumber, secondNumber).toFixed(2);
-        case '/': return divide(firstNumber, secondNumber).toFixed(2);
-        case 'pow': return Math.pow(firstNumber, secondNumber).toFixed(2);
-        default: return 'Invalid Syntax...'
+        case '+': result = add(firstNumber, secondNumber); break;
+        case '-': result = subtract(firstNumber, secondNumber); break;
+        case '*': result = multiply(firstNumber, secondNumber); break;
+        case '/': result = divide(firstNumber, secondNumber); break;
+        case 'pow': result = Math.pow(firstNumber, secondNumber);  break;
+        default: result='Invalid Syntax...'; break;
     }
+       if(typeof result === 'number' && !Number.isInteger(result)){
+            return result.toFixed(2);
+        }else{
+            return result;
+        }
 }
 function input(target) {
 
@@ -44,12 +50,16 @@ function input(target) {
         console.log({ secondNumber });
 
         if (result !== '') {
-            firstNumber = parseInt(screen.textContent);
+            firstNumber = parseFloat(screen.textContent);
+            firstDot = false;
+            secondDot = false;
             console.log({ firstNumber });
         }
         if (firstNumber !== '' && secondNumber !== '') {
-            firstNumber = operate(Operator, parseInt(firstNumber), parseInt(secondNumber));
+            firstNumber = operate(Operator, parseFloat(firstNumber), parseFloat(secondNumber));
             secondNumber = '';
+            firstDot = false;
+            secondDot = false;
             screen.textContent = firstNumber;
         }
 
@@ -75,9 +85,20 @@ function input(target) {
             screen.textContent = '0';
             CE.textContent = 'C';
             isDone = false;
-
+            firstDot = false;
+            secondDot = false;
 
         } else if (target === 'remove') {
+
+            if(screen.textContent === ''){
+                firstNumber = '';
+                secondNumber = '';
+                Operator = '';
+                isDone = false;
+                secondDot = false;
+                firstDot = false;
+                operatorClicked = false;
+            }
             if (isDone) {
                 secondNumber = secondNumber.split('').slice(0, -1).join('');
                 screen.textContent = screen.textContent.split('').slice(0, -1).join('');
@@ -89,30 +110,40 @@ function input(target) {
             console.log({ target });
             console.log({ firstNumber });
             console.log({ secondNumber });
+
+        } else if (target === 'dot') {
+            if (isDone && !secondDot) {
+                secondNumber += '.';
+                screen.textContent += '.';
+                secondDot = true;
+                console.log(`Dot secondNumber : ${secondNumber}`);
+            } else if (!isDone && !firstDot) {
+                firstNumber += '.';
+                screen.textContent = firstNumber;
+                firstDot = true;
+                console.log(`Screen : ${screen.textContent}`);
+                console.log(`Dot firstNumber : ${firstNumber}`);
+            }
         }
 
     } else if (target === 'equality') {
+        result = operate(Operator, parseFloat(firstNumber), parseFloat(secondNumber));
+        screen.textContent = result;
+        console.log({ result });
 
-        if (firstNumber === '' && result !== '') {
-            result = operate(previousOperator, parseInt(previousFirstNumber), parseInt(previousSecondNumber));
-            screen.textContent = result;
-            console.log(`Consecutive result: ${result}`);
+        previousFirstNumber = result;
+        previousSecondNumber = secondNumber;
+        previousOperator = Operator;
 
-        } else {
-            result = operate(Operator, parseInt(firstNumber), parseInt(secondNumber));
-            screen.textContent = result;
-            console.log({ result });
+        firstNumber = '';
+        secondNumber = '';
+        Operator = '';
+        isDone = false;
+        firstDot = false;
+        secondDot = false;
 
-            previousFirstNumber = result;
-            previousSecondNumber = secondNumber;
-            previousOperator = Operator;
+    } else return;
 
-            firstNumber = '';
-            secondNumber = '';
-            Operator = '';
-        }
-    }else return;
-    
 
 }
 
@@ -122,6 +153,8 @@ let secondNumber = '';
 let Operator = '';
 let operated = false;
 let result = 0;
+let firstDot = false;
+let secondDot = false;
 let isDone = false;
 let operatorClicked = false;
 let CEClicked = false;
@@ -131,7 +164,7 @@ let previousOperator = '';
 const PI = 3.1415926536;
 const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 const operators = ['+', '-', '*', '/', 'pow'];
-const special = ['AC', 'root', 'PI', 'remove']
+const special = ['AC', 'root', 'PI', 'remove', 'dot']
 
 const CE = document.querySelector('#AC');
 const screen = document.querySelector('#screen');
@@ -140,6 +173,8 @@ const buttons = document.querySelector('#buttons');
 
 buttons.addEventListener('click', function (event) {
     let target = event.target.id;
+
+    console.log({ target });
 
     if (screen.textContent !== '') {
         CE.textContent = 'CE';
