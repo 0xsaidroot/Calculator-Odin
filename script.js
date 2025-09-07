@@ -18,14 +18,14 @@ function operate(Operator, firstNumber, secondNumber) {
         case '-': result = subtract(firstNumber, secondNumber); break;
         case '*': result = multiply(firstNumber, secondNumber); break;
         case '/': result = divide(firstNumber, secondNumber); break;
-        case 'pow': result = Math.pow(firstNumber, secondNumber);  break;
-        default: result='Invalid Syntax...'; break;
+        case 'pow': result = Math.pow(firstNumber, secondNumber); break;
+        default: result = 'Invalid Syntax...'; break;
     }
-       if(typeof result === 'number' && !Number.isInteger(result)){
-            return result.toFixed(2);
-        }else{
-            return result;
-        }
+    if (typeof result === 'number' && !Number.isInteger(result)) {
+        return result.toFixed(2);
+    } else {
+        return result;
+    }
 }
 function input(target) {
 
@@ -90,7 +90,7 @@ function input(target) {
 
         } else if (target === 'remove') {
 
-            if(screen.textContent === ''){
+            if (screen.textContent === '') {
                 firstNumber = '';
                 secondNumber = '';
                 Operator = '';
@@ -124,6 +124,36 @@ function input(target) {
                 console.log(`Screen : ${screen.textContent}`);
                 console.log(`Dot firstNumber : ${firstNumber}`);
             }
+        } else if (target === 'root') {
+            console.log({ result });
+
+            if (result !== 0) {
+                firstNumber = result;
+                isDone = false;
+            }
+
+            if (isDone) {
+                console.log('secondNumber before', secondNumber);
+                let rootResultSecond = (secondNumber >= 0) ? Math.sqrt(secondNumber) : 0;
+                if (typeof rootResultSecond === 'number' && !Number.isInteger(rootResultSecond)) {
+                    secondNumber = rootResultSecond.toFixed(5);
+                } else {
+                    secondNumber = rootResultSecond;
+                }
+                screen.textContent = screen.textContent.split('').slice(0, -1).join('') + secondNumber;
+                console.log('Sqrt  secondNumber : ', secondNumber);
+            } else {
+                console.log('firstNumber before', firstNumber);
+                let rootResult = (firstNumber >= 0) ? Math.sqrt(firstNumber) : 0;
+                if (typeof rootResult === 'number' && !Number.isInteger(rootResult)) {
+                    firstNumber = rootResult.toFixed(5);
+                } else {
+                    firstNumber = rootResult;
+                }
+                screen.textContent = firstNumber;
+                console.log('sqrt firstNumber : ', firstNumber);
+            }
+
         }
 
     } else if (target === 'equality') {
@@ -147,7 +177,6 @@ function input(target) {
 
 }
 
-
 let firstNumber = '';
 let secondNumber = '';
 let Operator = '';
@@ -164,7 +193,7 @@ let previousOperator = '';
 const PI = 3.1415926536;
 const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 const operators = ['+', '-', '*', '/', 'pow'];
-const special = ['AC', 'root', 'PI', 'remove', 'dot']
+const special = ['AC', 'root', 'PI', 'remove', 'dot','percent']
 
 const CE = document.querySelector('#AC');
 const screen = document.querySelector('#screen');
@@ -181,6 +210,7 @@ buttons.addEventListener('click', function (event) {
     } else {
         CE.textContent = 'C';
     }
+    
     input(target);
 
 })
