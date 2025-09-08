@@ -187,6 +187,10 @@ function input(target) {
                 screen.textContent = firstNumber;
                 console.log('percent firstNumber : ', firstNumber);
             }
+            firstNumber = '';
+            secondNumber = '';
+            Operator = '';
+            isDone = false;
 
         }
         else if (target === 'PI') {
@@ -200,6 +204,27 @@ function input(target) {
                 console.log(`PI input screen: ${screen.textContent}`);
                 screen.textContent = firstNumber;
             }
+            firstNumber = '';
+            secondNumber = '';
+            Operator = '';
+            isDone = false;
+
+        }
+        else if (target === 'E') {
+
+            if (isDone) {
+                secondNumber = E;
+                screen.textContent += E;
+                operatorClicked = false;
+            } else {
+                firstNumber = E;
+                console.log(`E input screen: ${screen.textContent}`);
+                screen.textContent = firstNumber;
+            }
+            firstNumber = '';
+            secondNumber = '';
+            Operator = '';
+            isDone = false;
 
         }
 
@@ -237,10 +262,11 @@ let CEClicked = false;
 let previousFirstNumber = '';
 let previousSecondNumber = '';
 let previousOperator = '';
+const E = 2.71;
 const PI = 3.1415926536;
 const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 const operators = ['+', '-', '*', '/', 'pow'];
-const special = ['AC', 'root', 'PI', 'remove', 'dot', 'percent']
+const special = ['AC', 'root', 'PI', 'remove', 'dot', 'percent', 'E', 'plusMinus'];
 
 const CE = document.querySelector('#AC');
 const screen = document.querySelector('#screen');
