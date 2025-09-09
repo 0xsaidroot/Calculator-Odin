@@ -31,45 +31,52 @@ function input(target) {
 
     if (numbers.includes(target)) {
         let entry = target;
-
+        if (result !== '') {
+            result = '';
+            firstNumber = '';
+            secondNumber = '';
+            Operator = '';
+            isDone = false;
+            firstDot = false;
+            secondDot = false;
+            upperText.textContent = '';
+        }
         if (isDone) {
             secondNumber += entry;
-            screen.textContent += entry;
+            lowerText.textContent = secondNumber;
             operatorClicked = false;
         } else {
             firstNumber += entry;
-            console.log(`Number input screen: ${screen.textContent}`);
-            screen.textContent = firstNumber;
+            lowerText.textContent = firstNumber;
         }
-
-        console.log('Number input ', { firstNumber });
-        console.log('Number input', { secondNumber });
 
     } else if (operators.includes(target)) {
         console.log('Operator: ', { firstNumber });
         console.log('Operator: ', { secondNumber });
 
         if (result !== '') {
-            firstNumber = parseFloat(screen.textContent);
+            firstNumber = parseFloat(lowerText.textContent);
             firstDot = false;
             secondDot = false;
+            result = '';
             console.log('When result is not empty ', { firstNumber });
         }
         if (firstNumber !== '' && secondNumber !== '') {
-            firstNumber = operate(Operator, parseFloat(firstNumber), parseFloat(secondNumber));
-            secondNumber = '';
+            let screenResult = operate(Operator, parseFloat(firstNumber), parseFloat(secondNumber));
+            firstNumber = screenResult;
             firstDot = false;
             secondDot = false;
-            screen.textContent = firstNumber;
+            lowerText.textContent = secondNumber;
         }
 
         if (operatorClicked === true) {
             Operator = target;
-            screen.textContent = screen.textContent.split('').slice(0, -2).join('') + ` ${Operator} `;
+            upperText.textContent = upperText.textContent.split('').slice(0, -2).join('') + ` ${Operator} `;
             console.log(`Operator clicked: ${Operator}`);
         } else {
             Operator = target;
-            screen.textContent += ` ${Operator} `;
+            upperText.textContent = firstNumber + ` ${Operator} `;
+            lowerText.textContent = firstNumber;
             isDone = true;
             operatorClicked = true;
             console.log('Opeartor Not clicked', { Operator });
@@ -82,44 +89,57 @@ function input(target) {
         if (target === 'AC') {
             firstNumber = '';
             secondNumber = '';
-            screen.textContent = '0';
+            Operator = '';
+            operatorClicked = false;
+            upperText.textContent = '';
+            lowerText.textContent = '0';
             CE.textContent = 'C';
             isDone = false;
             firstDot = false;
             secondDot = false;
 
+
         } else if (target === 'remove') {
-
-            if (screen.textContent === '') {
-                firstNumber = '';
-                secondNumber = '';
-                Operator = '';
-                isDone = false;
-                secondDot = false;
-                firstDot = false;
-                operatorClicked = false;
-            }
-            if (isDone) {
-                secondNumber = secondNumber.split('').slice(0, -1).join('');
-                screen.textContent = screen.textContent.split('').slice(0, -1).join('');
+            if (!isDone) {
+                firstNumber = firstNumber.slice(0, -1);
+                if (firstNumber === '') {
+                    lowerText.textContent = '0';
+                } else {
+                    lowerText.textContent = firstNumber;
+                }
             } else {
-                firstNumber = firstNumber.split('').slice(0, -1).join('');
-                screen.textContent = firstNumber;
+
+                secondNumber = secondNumber.slice(0, -1);
+                if (secondNumber === '') {
+                    lowerText.textContent = '0';
+                } else {
+                    lowerText.textContent = secondNumber;
+                }
+            }
+            if (!firstNumber.includes('.')) firstDot = false;
+            if (!secondNumber.includes('.')) secondDot = false;
+
+            if (firstNumber === '' && secondNumber === '') {
+                Operator = '';
+                operatorClicked = false;
+                isDone = false;
             }
 
-            console.log('Special', { target });
-            console.log('Remove First', { firstNumber });
-            console.log('Remove Second', { secondNumber });
+            lowerText.textContent = lowerText.textContent || '0';
+
+            upperText.textContent = '';
+
+            console.log('Remove pressed', { firstNumber, secondNumber });
 
         } else if (target === 'dot') {
             if (isDone && !secondDot) {
                 secondNumber += '.';
-                screen.textContent += '.';
+                lowerText.textContent += '.';
                 secondDot = true;
                 console.log(`Dot secondNumber : ${secondNumber}`);
             } else if (!isDone && !firstDot) {
                 firstNumber += '.';
-                screen.textContent = firstNumber;
+                lowerText.textContent = firstNumber;
                 firstDot = true;
                 console.log(`Screen : ${screen.textContent}`);
                 console.log(`Dot firstNumber : ${firstNumber}`);
@@ -127,7 +147,7 @@ function input(target) {
         } else if (target === 'root') {
             console.log({ result });
 
-            if (result !== 0) {
+            if (result !== '' && !isNaN(result)) {
                 firstNumber = result;
                 isDone = false;
                 operatorClicked = false;
@@ -136,126 +156,128 @@ function input(target) {
             if (isDone) {
                 console.log('secondNumber before', secondNumber);
                 let rootResultSecond = (parseFloat(secondNumber) >= 0) ? Math.sqrt(parseFloat(secondNumber)) : 0;
+                upperText.textContent += `√${secondNumber}`;
                 if (typeof rootResultSecond === 'number' && !Number.isInteger(rootResultSecond)) {
                     secondNumber = rootResultSecond.toFixed(5);
                 } else {
                     secondNumber = rootResultSecond;
                 }
-                screen.textContent = screen.textContent.split('').slice(0, -1).join('') + secondNumber;
                 console.log('Sqrt  secondNumber : ', secondNumber);
             } else {
                 console.log('firstNumber before', firstNumber);
                 operatorClicked = false;
+                upperText.textContent = `√${firstNumber}`;
                 let rootResult = (parseFloat(firstNumber) >= 0) ? Math.sqrt(parseFloat(firstNumber)) : 0;
                 if (typeof rootResult === 'number' && !Number.isInteger(rootResult)) {
                     firstNumber = rootResult.toFixed(5);
                 } else {
                     firstNumber = rootResult;
                 }
-                screen.textContent = firstNumber;
+                lowerText.textContent = firstNumber
                 console.log('sqrt firstNumber : ', firstNumber);
             }
 
         } else if (target === 'percent') {
-            console.log({ result });
-
-            if (result !== 0) {
-                firstNumber = result;
-                isDone = false;
-                operatorClicked = false;
-            }
-
-            if (isDone) {
-                console.log('secondNumber before percent', secondNumber);
-                let rootResultSecond = (parseFloat(secondNumber) >= 0) ? parseFloat(secondNumber) / 100 : 0;
-                if (typeof rootResultSecond === 'number' && !Number.isInteger(rootResultSecond)) {
-                    secondNumber = rootResultSecond.toFixed(2);
-                } else {
-                    secondNumber = rootResultSecond;
+            if (!isDone) {
+                if (firstNumber !== '' && !isNaN(firstNumber)) {
+                    let pprevious =firstNumber;
+                    let percentValue = parseFloat(firstNumber) / 100;
+                    firstNumber = percentValue.toString();
+                    lowerText.textContent = pprevious + '%';
                 }
-                screen.textContent = screen.textContent.split('').slice(0, -1).join('') + secondNumber;
-                console.log(' percent secondNumber : ', secondNumber);
             } else {
-                console.log('firstNumber before percent', firstNumber);
-                let rootResult = (parseFloat(firstNumber) >= 0) ? parseFloat(firstNumber) / 100 : 0;
-                operatorClicked = false;
-                if (typeof rootResult === 'number' && !Number.isInteger(rootResult)) {
-                    firstNumber = rootResult.toFixed(2);
-                } else {
-                    firstNumber = rootResult;
+                if (secondNumber !== '' && !isNaN(secondNumber)) {
+                    let previous  = secondNumber;
+                    let percentValue = parseFloat(secondNumber) / 100;
+                    secondNumber = percentValue.toString();
+                    lowerText.textContent = previous + '%';
                 }
-                screen.textContent = firstNumber;
-                console.log('percent firstNumber : ', firstNumber);
             }
-            firstNumber = '';
-            secondNumber = '';
-            Operator = '';
-            isDone = false;
-
         }
         else if (target === 'PI') {
 
-            if (isDone) {
-                secondNumber = PI;
-                screen.textContent += PI;
-                operatorClicked = false;
+            if (!isDone) {
+                firstNumber = PI.toString();
+                lowerText.textContent = 'π';
+                upperText.textContent = firstNumber;
             } else {
-                firstNumber = PI;
-                console.log(`PI input screen: ${screen.textContent}`);
-                screen.textContent = firstNumber;
+                secondNumber = PI.toString();
+                lowerText.textContent = 'π';
+                upperText.textContent = `${firstNumber} ${Operator} π`;
             }
-            firstNumber = '';
-            secondNumber = '';
-            Operator = '';
-            isDone = false;
-
         }
         else if (target === 'E') {
 
-            if (isDone) {
-                secondNumber = E;
-                screen.textContent += E;
-                operatorClicked = false;
+            if (!isDone) {
+                firstNumber = E.toString();
+                lowerText.textContent = 'e';
+                upperText.textContent = firstNumber;
             } else {
-                firstNumber = E;
-                console.log(`E input screen: ${screen.textContent}`);
-                screen.textContent = firstNumber;
+                secondNumber = E.toString();
+                lowerText.textContent = 'e';
+                upperText.textContent = `${firstNumber} ${Operator} e`;
             }
-            firstNumber = '';
-            secondNumber = '';
-            Operator = '';
-            isDone = false;
 
+        }
+        else if (target === 'plusMinus') {
+            if (!isDone) {
+                if (firstNumber.startsWith('-')) {
+                    firstNumber = firstNumber.slice(1);
+                } else if (firstNumber !== '' && firstNumber !== '0') {
+                    firstNumber = '-' + firstNumber;
+                }
+                lowerText.textContent = firstNumber || '0';
+            } else {
+                if (secondNumber.startsWith('-')) {
+                    secondNumber = secondNumber.slice(1);
+                } else if (secondNumber !== '' && secondNumber !== '0') {
+                    secondNumber = '-' + secondNumber;
+                }
+                lowerText.textContent = secondNumber || '0';
+            }
         }
 
     } else if (target === 'equality') {
+
+        if (firstNumber === '' && result !== '') {
+            firstNumber = previousFirstNumber;
+            Operator = previousOperator;
+            secondNumber = previousSecondNumber;
+        }
         result = operate(Operator, parseFloat(firstNumber), parseFloat(secondNumber));
-        screen.textContent = result;
+        upperText.textContent = `${firstNumber} ${Operator} ${secondNumber} =`
+        lowerText.textContent = result;
+        console.log({ firstNumber }, { secondNumber });
         console.log('Opeartor clicked result : ', { result });
+
 
         previousFirstNumber = result;
         previousSecondNumber = secondNumber;
         previousOperator = Operator;
+
 
         firstNumber = '';
         secondNumber = '';
         Operator = '';
         isDone = false;
         firstDot = false;
+        isPlusMinusFirst = false;
+        isPlusMinusSecond = false;
         secondDot = false;
-
-    } else return;
-
+    }
 
 }
+
 
 let firstNumber = '';
 let secondNumber = '';
 let Operator = '';
 let operated = false;
-let result = 0;
+let result = '';
 let firstDot = false;
 let secondDot = false;
+let isPlusMinusFirst = false;
+let isPlusMinusSecond = false;
 let isDone = false;
 let operatorClicked = false;
 let CEClicked = false;
@@ -269,9 +291,12 @@ const operators = ['+', '-', '*', '/', 'pow'];
 const special = ['AC', 'root', 'PI', 'remove', 'dot', 'percent', 'E', 'plusMinus'];
 
 const CE = document.querySelector('#AC');
-const screen = document.querySelector('#screen');
-screen.textContent = '0';
+const upperText = document.querySelector('#upperText');
+const lowerText = document.querySelector('#lowerText');
 const buttons = document.querySelector('#buttons');
+
+lowerText.textContent = '0';
+upperText.textContent = '';
 
 buttons.addEventListener('click', function (event) {
     let target = event.target.id;
