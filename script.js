@@ -299,11 +299,7 @@ lowerText.textContent = '0';
 upperText.textContent = '';
 
 buttons.addEventListener('click', function (event) {
-    const btn = event.target.closest('button');
-    if(!btn) return;
-
-    let target = btn.id;
-
+let target  = event.target.id;
 
     if (screen.textContent !== '') {
         CE.textContent = 'CE';
